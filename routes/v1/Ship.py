@@ -1,13 +1,20 @@
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from flask_restful import Resource
+
+from settings import Settings
 
 
 class Ship(Resource):
     def get(self):
-        page = urlopen(f"https://azurlane.koumakan.jp/{request.args.get('name')}")
+        name = request.args.get('name')
+        if name == None:
+            error = {"responseMessage": "Bad Request", "responseCode": 400, "data": {"message": "Missing name url param"}}
+            return make_response(jsonify(error), 400)
+
+        page = urlopen(f"{Settings.baseUrl}/{name}")
         html = BeautifulSoup(page, features="html.parser")
 
         images = []
@@ -17,8 +24,8 @@ class Ship(Resource):
             if c != None and len(c) > 0:
                 if c[0] == "adaptiveratioimg":
                     i = div.find("img")
-                    src = f"https://azurlane.koumakan.jp/{i.get('src')}"
+                    src = f"{Settings.baseUrl}{i.get('src')}"
                     images.append(src)
 
-        result = {'responseMessage': 'OK', 'responseCode': 200, 'data': {'skins': images}}
+        result = {"responseMessage": "OK", "responseCode": 200, "data": {"skins": images}}
         return jsonify(result)

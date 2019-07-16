@@ -11,10 +11,10 @@ from routes.v1.Ship import Ship
 app = Flask(__name__)
 api = Api(app)
 
-api.add_resource(Main, '/')
-api.add_resource(Index, '/v1')
-api.add_resource(Ship, '/v1/ship')
+api.add_resource(Main, "/")
+api.add_resource(Index, "/v1")
+api.add_resource(Ship, "/v1/ship")
 
 
-if __name__ == '__main__':
-     app.run(port='5003')
+if __name__ == "__main__":
+     app.run(port="5003")
